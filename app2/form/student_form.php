@@ -18,7 +18,7 @@ if($type=='add'){
       <p>
         <?php
         if($type=='edit'){
-          echo "<input type='hidden' name='id' value=''>";
+          echo "<input type='hidden' name='id' id='stuId' value=''>";
         }
 
         ?>
