@@ -56,6 +56,8 @@
 </body>
 </html>
 <script>
+    
+
     /********************************************************
     * 1.api網址  https://kktix.com/events.json
     * 2.宣告一個XMLHttpRequest物件
@@ -64,38 +66,45 @@
     * 5.送出請求
     ********************************************************/
 
-    //宣告一個XMLHttpRequest物件
-    let xhr=new XMLHttpRequest;
+    /* 1. JS本身不具備和Server溝通的網路能力, 僅能操作使用者自身頁面的事件
+       2. 瀏覽器具備和Server溝通的網路能力
+       3. JS可操控瀏覽器的XMLHttpRequest去和Server進行網路溝通
+    */
 
-    //建立請求的各項設定及實質內容
-    xhr.open('get','https://kktix.com/events.json')
+    // 1. 由JS宣告一個變數為該聯絡方法
+    let xhr=new XMLHttpRequest
 
-    //建立得到回應時的各項設定及行為
+    // 2. 使用open()將該連絡方法啟用, 聯繫時(如何取得,去哪取得,是否異步)
+    xhr.open('get', 'https://kktix.com/events.json', true)
+    
+    // 3. 建立得到回應時的各項設定及動作
     xhr.onload=function(){
-        let type=xhr.getResponseHeader("Content-Type")
-        let status=xhr.status
-        let res=xhr.responseText
-        let data=JSON.parse(res)
-        let title=document.querySelector(".title")
-        title.innerHTML=data.title
+        let type=xhr.getResponseHeader("Content-Type") // 檔案類型
+        let status=xhr.status // 傳輸狀態
+        let res=xhr.responseText // 文檔內容
+        let data=JSON.parse(res) // 將收到的JSON檔解碼
+        let title=document.querySelector('.title') // 找到class為title的地方
+        
+        // title.innerHTML=data.title // title的內容為data撈到的資料中的title
 
-        //console.log(data)
         let ul=document.querySelector('ul')
-        let li='';
+        let li=''
         let entrys=data.entry
-        for(let i=0;i<entrys.length;i++){
-            li=li+`<li class='card col-3'>
-                    <div class='card-body'>
-                        ${entrys[i].title}
-                    <div class="name">${entrys[i].author.name}</div>
-                    <div class="summary">${entrys[i].summary}</div>
-                
-                    </div>
-                   </li>`;
+        for(let i=0; i<entrys.length; i++){
+            li=li+`<li>${entrys[i].title}</li>` // 用+, 不然li只會被覆蓋到剩下最後一筆
         }
         ul.innerHTML=li
+        // console.log(type,status,res)
+        // console.log(data)
     }
-    //送出請求
-    xhr.send();
+    // 4. xhr發出請求, 請求內容為上述攸關xhr的open()、onload()等動作
+    xhr.send()
+
+    /* 勿把非同步的內容放到請求之後再次應用, 因讀取頁面時會先載入這些非請求的code
+       然後才帶入請求, 已經先好跑的非請求內容就無法獲取這些資料 */
+    //    for(let i=0; i<data.entry.length; i++){
+    //         console.log(data.entry[i])
+    //    }
+    
 
     </script>
