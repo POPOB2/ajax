@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Fetch</title>
     <link rel="shortcut icon" href="#" type="image/x-icon">
+    <link rel="shortcut icon" href="#" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
-
     <style>
         .card-group{
             width:80vw;
@@ -16,30 +16,28 @@
         }
         .card-group .card{
             flex:unset;
-            padding:1rem;
+            padding:1rem; 
             border:0;
-
+            
         }
         .card-group .card .card-body{
+            min-height:15rem;
             flex:unset;
             padding:0.5rem;
             border:1px solid #ccc;
-            border-radius: 0.5rem;
-            min-height:15rem;
+            border-radius:0.5rem;
         }
         .name{
             font-weight: bolder;
-            border-bottom:1px solid #999;
+            border-bottom: 1px solid #999;
             margin:0.25rem 0;
         }
         .summary{
-            
-            border-bottom:1px solid #ddd;
+            border-bottom: 1px solid #ddd;
             box-shadow: 0 0 5px #ccc;
             margin:0.5rem 0;
-            width:90%;
-            float:right;
-
+            width: 90%;
+            float: right;
         }
     </style>
 </head>
@@ -50,7 +48,7 @@
     <ul class="card-group">
 
     </ul>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>    
 </body>
@@ -67,30 +65,36 @@
     //建立回呼函式(call back function)來處理回應時的各項行為
     //建立錯誤處理
 
+    // 用fetch()方法獲取資料
     fetch('https://kktix.com/events.json',{method:'get'})
+
+    // .then()==執行, (res)=>箭頭函式==function res(), 執行結果會返回給該fetch()
+    // 第一次then執行:處理接收到的response, 通常用於解析json之行為
     .then((res)=>{
-        
-        return res.json()
+        // console.log(res.json());
+        return res.json() // 將結果返回給fetch供後續then應用
     })
+    
+    // 第二次then執行:將上一個then解析過data依需求應用
     .then((events)=>{
-        let title=document.querySelector(".title")
+        // console.log(events.title, events.entry)
+        let title=document.querySelector('.title')
         title.innerHTML=events.title
-        //console.log(data)
         let ul=document.querySelector('ul')
-        let li='';
+        let li=''
         let entrys=events.entry
-        for(let i=0;i<entrys.length;i++){
+        for(let i=0; i<entrys.length; i++){
             li=li+`<li class='card col-3'>
                     <div class='card-body'>
                         ${entrys[i].title}
-                    <div class="name">${entrys[i].author.name}</div>
-                    <div class="summary">${entrys[i].summary}</div>
-                
+                        <div class='summary'>${entrys[i].summary}<div>
+                        <div class='name'>${entrys[i].author.name}</div>
                     </div>
-                   </li>`;
+                   </li>`
         }
         ul.innerHTML=li
     })
+    // 發生錯誤後執行顯示的區塊
     .catch()
 
   </script>
