@@ -63,21 +63,23 @@
     * 3.建立回呼函式(call back function)來處理回應時的各項行為
     * 4.建立錯誤處理
     ********************************************************/
+
+    
     //利用$.ajax()方法傳送請求並取得回應
-/*     $.ajax(
-      {
-        url:'https://kktix.com/events.json',
-        type:'get',
-        success:(res)=>{
-            eventList(res)
-        },
-      }
-    )   
- */
+    // $.ajax({
+    //     url:'https://kktix.com/events.json',
+    //     type:'get',
+    //     success:(res)=>{
+    //         // console.log(res); // jquery的ajax不需json.parse()即轉換完畢
+    //         eventList(res)
+    //     }
+    // })
+ 
     
     //利用$.get()方法傳送請求並取得回應
-      $.get('https://kktix.com/events.json',(res)=>{
-        eventList(res)
-      })
+    $.get('https://kktix.com/events.json', (res)=>{
+        // console.log(res);
+        eventList(res);
+    })
 
   </script>
