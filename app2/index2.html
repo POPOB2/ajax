@@ -32,13 +32,25 @@
 </head>
 <body>
   <h1 class="header">學生資料管理系統</h1>
+  <div class="addForm">
+    <form method="post">
+      <p>班級:<input type="number" name="classroom" id="classroom"></p>
+      <p>座號:<input type="number" name="seatnum" id="seatnum"></p>
+      <p>姓名:<input type="text" name="name" id="name"></p>
+      <p>生日:<input type="date" name="birthday" id="birthday"></p>
+      <p>
+        <input type="button" value="確認新增" onclick="create()">
+      </p>
+    </form>
+  </div>
+  <div class="editForm"></div>
   <table id="list">
-    <a href="Javascript:query(101)">101</a>
-    <br>
-    <a href="Javascript:query(102)">102</a>
-    <a href="Javascript:query(103)">103</a>
-    <a href="JavaScript:query(104)">104</a>
+    <a href="Javascript:query(101)">101</a><br>
+    <a href="Javascript:query(102)">102</a><br>
+    <a href="Javascript:query(103)">103</a><br>
+    <a href="JavaScript:query(104)">104</a><br>
     <a href="Javascript:query(105)">105</a>
+    <h3 id="classroom"></h3>
   </table>
 
 
@@ -61,11 +73,18 @@
 
 //新增資料的函式
 function create(){
-  
+  let form={
+    "classroom":$("#classroom").val(),
+    "seatnum":$("#seatnum").val(),
+    "name":$("#name").val(),
+    "birthday":$("#birthday").val()
+  }
+  console.log(form)
 }
 
 //查詢資料的函式
 function query(classroom){
+  $("#classroom").html(`現在顯示的是${classroom}班的學生`)
   // 獲取自query2的所有get內容, 自訂義為students
   $.get("api/query2.php",{classroom},(students)=>{ 
     students=JSON.parse(students)
