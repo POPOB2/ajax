@@ -50,7 +50,7 @@
     <a href="Javascript:query(103)">103</a><br>
     <a href="JavaScript:query(104)">104</a><br>
     <a href="Javascript:query(105)">105</a>
-    <h3 id="classroom"></h3>
+    <h3 id="classroomW"></h3>
   </table>
 
 
@@ -79,12 +79,22 @@ function create(){
     "name":$("#name").val(),
     "birthday":$("#birthday").val()
   }
-  console.log(form)
+  // console.log(form)
+  // 將宣告form裡的內容送到insert2.php, 並將送到insert2.php後的內容回傳到這裡的(res)裡, 並使用此res的回傳值動作
+  $.post("./api/insert2.php", form, (res)=>{
+    // console.log(res);
+    if(parseInt(res)===1){ // parseInt()轉為數字, 避免傳來字串發生錯誤
+      alert("新增成功")
+      query(form.classroom)
+    }else{
+      alert("新增失敗")
+    }
+  })
 }
 
 //查詢資料的函式
 function query(classroom){
-  $("#classroom").html(`現在顯示的是${classroom}班的學生`)
+  $("#classroomW").html(`現在顯示的是${classroom}班的學生`)
   // 獲取自query2的所有get內容, 自訂義為students
   $.get("api/query2.php",{classroom},(students)=>{ 
     students=JSON.parse(students)
