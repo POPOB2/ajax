@@ -31,8 +31,10 @@
 
 </head>
 <body>
+
   <h1 class="header">學生資料管理系統</h1>
   <div class="addForm">
+    <h3>新增學員</h3>
     <form method="post">
       <p>班級:<input type="number" name="classroom" id="classroom"></p>
       <p>座號:<input type="number" name="seatnum" id="seatnum"></p>
@@ -43,17 +45,27 @@
       </p>
     </form>
   </div>
-  <div class="editForm"></div>
-
+  <hr>
+  <div class="editForm">
+    <h3>編輯學員</h3>
+    <form method="post">
+      <p>班級:<input type="number" name="classroom" id="editClassroom" value=""></p>
+      <p>座號:<input type="number" name="seatnum" id="editSeatnum" value=""></p>
+      <p>姓名:<input type="text" name="name" id="editName" value=""></p>
+      <p>生日:<input type="date" name="birthday" id="editBirthday" value=""></p>
+      <p><input type="button" value="確認編輯" onclick="update()"></p>
+    </form>
+  </div>
+  <hr>
+  <table id="list">
     <a href="Javascript:query(101)">101</a><br>
     <a href="Javascript:query(102)">102</a><br>
     <a href="Javascript:query(103)">103</a><br>
     <a href="JavaScript:query(104)">104</a><br>
     <a href="Javascript:query(105)">105</a>
-    <h3 id="room"></h3>
+    <!-- 用data在此塞一個預設值101, 供del()裡執行query()時可以取需顯示年級的值 -->
+    <h3 id="room" data-classroom="101"></h3>
     <div id="result" style="display:none"></div>
-
-  <table id="list">
   </table>
 
 
@@ -71,7 +83,7 @@
 * 4.是否會有回傳值？回傳值的功用及處理？
 * 5.是否需要更新畫面內容？更新畫面的方法？
 ************************************/
-// query(101)
+query(101)
 
 
 //新增資料的函式
@@ -98,6 +110,8 @@ function create(){
 //查詢資料的函式
 function query(classroom){
   $("#room").html(`現在顯示的是${classroom}班的學生`)
+  $("#room").data("classroom",classroom) // 至#room取其data裡的"clasroom"資料, 覆蓋為classroom
+  console.log($("#room").data("classroom"));
   // 獲取自query2的所有get內容, 自訂義為students
   $.get("api/query2.php",{classroom},(students)=>{ 
     students=JSON.parse(students)
@@ -110,7 +124,8 @@ function query(classroom){
               <td>${val.name}</td>
               <td>${val.birthday}</td>
               <td>
-                <button onclick="del(${classroom},${val.id})">刪除(${val.id})</button>
+                <button onclick="edit(${val.id})">編輯(${val.id})</button>
+                <button onclick="del(${val.id})">刪除(${val.id})</button>
               <td>
              </tr>`;
     })
@@ -120,7 +135,15 @@ function query(classroom){
 
 
 //取得要修改的學生資料
-
+function edit(id){
+  $.get("./api/show.php", {id}, (student)=>{
+    student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
+    $("#editClassroom").val(student.classroom), // 將student物件的結果放到對應的 "#表單id" 內
+    $("#editSeatnum").val(student.seat_num),
+    $("#editName").val(student.name),
+    $("#editBirthday").val(student.birthday)
+  })
+}
 
 //編輯資料的函式
 function update(){
@@ -129,7 +152,8 @@ function update(){
 
 
 //刪除資料的函式
-function del(classroom,id){ // 多帶一個classroom參數供query()使用
+function del(id){ // 多帶一個classroom參數供query()使用
+  let classroom=$("#room").data('classroom')
   $.post("./api/delete.php", {id},(res)=>{
     if(parseInt(res)===1){
       $("#result").css({background:'lightblue', color:'blue', display:'block'}).text('刪除成功')
