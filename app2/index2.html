@@ -129,7 +129,7 @@ function update(){
 
 
 //刪除資料的函式
-function del(classroom,id){
+function del(classroom,id){ // 多帶一個classroom參數供query()使用
   $.post("./api/delete.php", {id},(res)=>{
     if(parseInt(res)===1){
       $("#result").css({background:'lightblue', color:'blue', display:'block'}).text('刪除成功')
@@ -137,6 +137,12 @@ function del(classroom,id){
       $("#result").css({background:'pinky', color:'red', display:'block'}).text('刪除失敗')
     }
     query(classroom)
+
+  // 3秒後將display:block的刪除訊息隱藏
+    setTimeout(() => {
+      $('#result').hide()
+    }, 3000);
+
   })
 }
 
