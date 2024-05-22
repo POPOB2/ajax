@@ -53,7 +53,10 @@
       <p>座號:<input type="number" name="seatnum" id="editSeatnum" value=""></p>
       <p>姓名:<input type="text" name="name" id="editName" value=""></p>
       <p>生日:<input type="date" name="birthday" id="editBirthday" value=""></p>
-      <p><input type="button" value="確認編輯" onclick="update()"></p>
+      <input type="hidden" name="id" id="editId" value="">
+      <p>
+        <input type="button" value="確認編輯" onclick="update()">
+      </p>
     </form>
   </div>
   <hr>
@@ -138,16 +141,35 @@ function query(classroom){
 function edit(id){
   $.get("./api/show.php", {id}, (student)=>{
     student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
-    $("#editClassroom").val(student.classroom), // 將student物件的結果放到對應的 "#表單id" 內
-    $("#editSeatnum").val(student.seat_num),
-    $("#editName").val(student.name),
+    // console.log(student) // 從api/show.php裡撈到的為該筆在庫的全部資料, 其中包含id, 可供update()使用
+    $("#editClassroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
+    $("#editSeatnum").val(student.seat_num)
+    $("#editName").val(student.name)
     $("#editBirthday").val(student.birthday)
+    $("#editId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
   })
+  
 }
 
 //編輯資料的函式
 function update(){
-  
+   let form={
+    "classroom":$("#editClassroom").val(),
+    "seatnum":$("#editSeatnum").val(),
+    "name":$("#editName").val(),
+    "birthday":$("#editBirthday").val(),
+    "id":$("#editId").val() // id為 從edit()帶進hidden的id, 供update.php執行sql句WHERE所需的id
+   }
+   $.post("./api/update.php",form,()=>{
+    $("#editClassroom").val("")
+    $("#editSeatnum").val("")
+    $("#editName").val("")
+    $("#editBirthday").val("")
+    $("#editId").val("") // 連同hidden的id, 將資料全部清空, 避免再次按到update()存入錯誤資料
+    query(form.classroom)
+    
+   })
+  //  console.log(form);
 }
 
 
