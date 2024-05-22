@@ -31,33 +31,10 @@
 
 </head>
 <body>
-
   <h1 class="header">學生資料管理系統</h1>
-  <div class="addForm">
-    <h3>新增學員</h3>
-    <form method="post">
-      <p>班級:<input type="number" name="classroom" id="classroom"></p>
-      <p>座號:<input type="number" name="seatnum" id="seatnum"></p>
-      <p>姓名:<input type="text" name="name" id="name"></p>
-      <p>生日:<input type="date" name="birthday" id="birthday"></p>
-      <p>
-        <input type="button" value="確認新增" onclick="create()">
-      </p>
-    </form>
-  </div>
-  <hr>
-  <div class="editForm">
-    <h3>編輯學員</h3>
-    <form method="post">
-      <p>班級:<input type="number" name="classroom" id="editClassroom" value=""></p>
-      <p>座號:<input type="number" name="seatnum" id="editSeatnum" value=""></p>
-      <p>姓名:<input type="text" name="name" id="editName" value=""></p>
-      <p>生日:<input type="date" name="birthday" id="editBirthday" value=""></p>
-      <input type="hidden" name="id" id="editId" value="">
-      <p>
-        <input type="button" value="確認編輯" onclick="update()">
-      </p>
-    </form>
+  <div class="btn btn-primary" onclick="loadForm('add')">新增學生</div>
+  <div id="studentForm">
+
   </div>
   <hr>
   <table id="list">
@@ -71,11 +48,6 @@
     <div id="result" style="display:none"></div>
   </table>
 
-
-
-
-
-
 </body>
 </html>
 <script>
@@ -88,6 +60,12 @@
 ************************************/
 query(101)
 
+function loadForm(type){ //無參數=$_GET, 有參數=$_POST
+  // $.get("./form/student_form.php",(form)=>{ // 獲取student_form.php的內容, 作為回傳值給form
+  //   $("#studentForm").html(form) // 將回傳的form塞進#studentForm內
+  // })
+  $("#studentForm").load("./form/student_form.php",{type})   // 或用load直接帶入, 用參數type區別新增、編輯
+}
 
 //新增資料的函式
 function create(){
@@ -137,16 +115,19 @@ function query(classroom){
 }
 
 
-//取得要修改的學生資料
+//顯示要修改的學生資料
 function edit(id){
+  loadForm("edit") 
+
   $.get("./api/show.php", {id}, (student)=>{
     student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
     // console.log(student) // 從api/show.php裡撈到的為該筆在庫的全部資料, 其中包含id, 可供update()使用
-    $("#editClassroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
-    $("#editSeatnum").val(student.seat_num)
-    $("#editName").val(student.name)
-    $("#editBirthday").val(student.birthday)
-    $("#editId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
+
+    $("#classroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
+    $("#seatnum").val(student.seat_num)
+    $("#name").val(student.name)
+    $("#birthday").val(student.birthday)
+    $("#stuId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
   })
   
 }
@@ -154,18 +135,18 @@ function edit(id){
 //編輯資料的函式
 function update(){
    let form={
-    "classroom":$("#editClassroom").val(),
-    "seatnum":$("#editSeatnum").val(),
-    "name":$("#editName").val(),
-    "birthday":$("#editBirthday").val(),
-    "id":$("#editId").val() // id為 從edit()帶進hidden的id, 供update.php執行sql句WHERE所需的id
+    "classroom":$("#classroom").val(),
+    "seatnum":$("#seatnum").val(),
+    "name":$("#name").val(),
+    "birthday":$("#birthday").val(),
+    "id":$("#stuId").val() // id為 從edit()帶進hidden的id, 供update.php執行sql句WHERE所需的id
    }
    $.post("./api/update.php",form,()=>{
-    $("#editClassroom").val("")
-    $("#editSeatnum").val("")
-    $("#editName").val("")
-    $("#editBirthday").val("")
-    $("#editId").val("") // 連同hidden的id, 將資料全部清空, 避免再次按到update()存入錯誤資料
+    $("#classroom").val("")
+    $("#seatnum").val("")
+    $("#name").val("")
+    $("#birthday").val("")
+    $("#stuId").val("") // 連同hidden的id, 將資料全部清空, 避免再次按到update()存入錯誤資料
     query(form.classroom)
     
    })
