@@ -32,7 +32,27 @@
 </head>
 <body>
   <h1 class="header">學生資料管理系統</h1>
-  <div class="btn btn-primary" onclick="loadForm('add')">新增學生</div>
+  <!-- position-sticky sticky-top 按鈕至頂浮動 -->
+  <div class="btn btn-primary position-sticky sticky-top" onclick="loadForm('add')">新增學生</div>
+
+<!-- Modal -->
+<div class="modal fade" id="stuModal" tabindex="-1" aria-labelledby="stuModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stuModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>
   <div id="studentForm">
 
   </div>
@@ -60,11 +80,10 @@
 ************************************/
 query(101)
 
-function loadForm(type){ //無參數=$_GET, 有參數=$_POST
-  // $.get("./form/student_form.php",(form)=>{ // 獲取student_form.php的內容, 作為回傳值給form
-  //   $("#studentForm").html(form) // 將回傳的form塞進#studentForm內
-  // })
-  $("#studentForm").load("./form/student_form.php",{type})   // 或用load直接帶入, 用參數type區別新增、編輯
+function loadForm(type){ 
+  $(".modal-body").load("./form/student_form.php",{type},()=>{ // 將表單內容放到boostrap提供的彈窗顯示位置".modal-body"
+    $("#stuModal").modal('show') // 官方文件說明:顯示彈窗
+  }) 
 }
 
 //新增資料的函式
@@ -85,6 +104,8 @@ function create(){
     }else{
       alert("新增失敗")
     }
+    $(".modal-body").html("") // 新增完將內容設為空
+    $("#stuModal").modal("hide") // 新增完隱藏該浮動視窗
   })
 }
 
@@ -117,20 +138,16 @@ function query(classroom){
 
 //顯示要修改的學生資料
 function edit(id){
-  // 直接使用function()可能會有非同步的問題, 下方資料若先回來, 此loadForm()未回來, 會找不到對應的表單
-  // loadForm("edit") 
-
-  // 改從loadForm()裡拿code修改, 在此依序執行, 避免非同步問題產生誰先回來的問題
-  $("#studentForm").load("./form/student_form.php",{type:'edit'}, ()=>{
+  $(".modal-body").load("./form/student_form.php",{type:'edit'}, ()=>{ // 將表單放入顯示內容位置".modal-body"
       $.get("./api/show.php", {id}, (student)=>{
-        student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
-        // console.log(student) // 從api/show.php裡撈到的為該筆在庫的全部資料, 其中包含id, 可供update()使用
-    
-        $("#classroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
+        student=JSON.parse(student) 
+        $("#classroom").val(student.classroom) 
         $("#seatnum").val(student.seat_num)
         $("#name").val(student.name)
         $("#birthday").val(student.birthday)
-        $("#stuId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
+        $("#stuId").val(student.id) 
+
+        $("#stuModal").modal("show") // show該彈窗"#stuModal"
     }) 
 
   })
@@ -153,7 +170,11 @@ function update(){
     $("#name").val("")
     $("#birthday").val("")
     $("#stuId").val("") // 連同hidden的id, 將資料全部清空, 避免再次按到update()存入錯誤資料
+    
+    $(".modal-body").html("")
+    $("#stuModal").modal("hide")
     query(form.classroom)
+    
     
    })
    

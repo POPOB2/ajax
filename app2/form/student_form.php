@@ -23,6 +23,7 @@ if($type=='add'){
   echo "<input type='button' value='確認編輯' onclick='update()'> ";
 }
 ?>
-<input type="button" value="取消" onclick="$('#studentForm').html('')">
+<!-- <input type="button" value="取消" onclick="$('#studentForm').html('')"> -->
+<input type="button" value="取消" onclick="$('.modal-body').html(''); $('#stuModal').modal('hide')">
 </form>
 
