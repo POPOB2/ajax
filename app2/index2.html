@@ -117,19 +117,24 @@ function query(classroom){
 
 //顯示要修改的學生資料
 function edit(id){
-  loadForm("edit") 
+  // 直接使用function()可能會有非同步的問題, 下方資料若先回來, 此loadForm()未回來, 會找不到對應的表單
+  // loadForm("edit") 
 
-  $.get("./api/show.php", {id}, (student)=>{
-    student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
-    // console.log(student) // 從api/show.php裡撈到的為該筆在庫的全部資料, 其中包含id, 可供update()使用
+  // 改從loadForm()裡拿code修改, 在此依序執行, 避免非同步問題產生誰先回來的問題
+  $("#studentForm").load("./form/student_form.php",{type:'edit'}, ()=>{
+      $.get("./api/show.php", {id}, (student)=>{
+        student=JSON.parse(student) // 回傳解析過的字串,用JSON.parse()將student轉為物件, 物件的key==庫的欄位
+        // console.log(student) // 從api/show.php裡撈到的為該筆在庫的全部資料, 其中包含id, 可供update()使用
+    
+        $("#classroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
+        $("#seatnum").val(student.seat_num)
+        $("#name").val(student.name)
+        $("#birthday").val(student.birthday)
+        $("#stuId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
+    }) 
 
-    $("#classroom").val(student.classroom) // 將student物件的結果放到對應的 "#表單id" 內
-    $("#seatnum").val(student.seat_num)
-    $("#name").val(student.name)
-    $("#birthday").val(student.birthday)
-    $("#stuId").val(student.id) // 多塞這個給編輯表單的hidden, 以供upadte()使用
   })
-  
+
 }
 
 //編輯資料的函式
@@ -141,6 +146,7 @@ function update(){
     "birthday":$("#birthday").val(),
     "id":$("#stuId").val() // id為 從edit()帶進hidden的id, 供update.php執行sql句WHERE所需的id
    }
+   console.log(form)
    $.post("./api/update.php",form,()=>{
     $("#classroom").val("")
     $("#seatnum").val("")
@@ -150,7 +156,7 @@ function update(){
     query(form.classroom)
     
    })
-  //  console.log(form);
+   
 }
 
 
